@@ -23,17 +23,27 @@ let eval char =
     | ']' -> ()
     | _ -> ()
 
-let rec scan input =
+let rec scan (input: string) =
+    let input = (input.ToCharArray ()) |> Array.toList
     match input with
     | head :: tail ->
         eval head
-        scan tail
+        List.fold
+            (fun x e -> x + e.ToString ())
+            "" tail |> scan
     | [] -> ()
 
 let rec repl () =
-    let input = System.Console.ReadLine ()
-    (input.ToCharArray ()) |> Array.toList |> scan
+    printf "    "
+    System.Console.ReadLine () |> scan
     repl ()
+    
+let scanFile file =
+    (System.IO.File.ReadAllText file) |> scan
 
-repl ()
-
+[<EntryPoint>]
+let main args =
+    if args.Length = 1
+    then args[0] |> scanFile
+    else repl ()
+    0
