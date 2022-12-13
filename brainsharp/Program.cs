@@ -1,61 +1,110 @@
 ﻿namespace brainsharp;
 
-internal class Program
+internal static class Program
 {
-    const int size = 30000;
-    static int i = 0;
-    private static char[] arr = new char[size];
+    private const int Size = 30000;
+    private const char Nil = '\0';
+    private static string? _oldCode;
+    private static int _i;
+    private static readonly char[] Arr = new char[Size];
+    private static readonly char[] Syms = { '>', '<', '+', '-', '.', ',', '[', ']' };
 
     static void Eval(char c)
     {
         switch (c)
         {
-            case '>': i++; break;
-            case '<': i--; break;
-            case '+': arr[i]++; break;
-            case '-': arr[i]--; break;
-            case '.': Console.Write(arr[i]); break;
-            case ',': arr[i] = Console.ReadKey().KeyChar; break;
-            case '[': break;
-            case ']': break;
-        };
+            case '>':
+                _i++;
+                break;
+            case '<':
+                _i--;
+                break;
+            case '+':
+                Arr[_i]++;
+                break;
+            case '-':
+                Arr[_i]--;
+                break;
+            case '.':
+                Console.Write(Arr[_i]);
+                break;
+            case ',':
+                Arr[_i] = Console.ReadKey().KeyChar;
+                break;
+        }
     }
-    
-    static void Scan(string input)
+
+    static void Scan(string? input)
     {
-        var nInput = input.ToCharArray().ToList();
-        if (nInput.Count > 0)
+        var nInput = input?.ToCharArray().ToList();
+        if (nInput!.Count > 0)
         {
-            Eval(nInput.First());
+            char c = nInput.First();
             input = nInput.Skip(1).Aggregate("", (prod, next) => prod + next);
-            Scan(input);
+
+            if (c == '[')
+            {
+                if (Arr[_i] != Nil)
+                {
+                    _oldCode = input;
+                    char newC = nInput.First();
+                    input = nInput.Skip(1).Aggregate("", (prod, next) => prod + next);
+                    Eval(newC);
+                    Scan(input);
+                }
+                else
+                {
+                    Scan(input.ToCharArray().ToList().SkipWhile(c => c != ']')
+                        .Aggregate("", (prod, next) => prod + next));
+                }
+            }
+            else if (c == ']')
+            {
+                if (Arr[_i] != Nil)
+                {
+                    input = _oldCode;
+                    Scan(input);
+                }
+                else
+                {
+                    char newC = nInput.First();
+                    input = nInput.Skip(1).Aggregate("", (prod, next) => prod + next);
+                    Eval(newC);
+                    Scan(input);
+                }
+            }
+            else
+            {
+                Eval(c);
+                Scan(input);
+            }
         }
     }
 
     static void ScanFile(string file)
     {
         var code = File.ReadAllText(file);
-        Scan(code);
+        Scan(code.Where(c => Syms.Contains(c)).Aggregate("", (prod, next) => prod + next));
     }
-    
+
     static void Repl()
     {
         for (;;)
         {
             Console.Write("   ");
             var code = Console.ReadLine();
-            Scan(code);
+            if (code != null) Scan(code.Where(c => Syms.Contains(c)).Aggregate("", (prod, next) => prod + next));
         }
     }
 
     static void Init()
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < Size; i++)
         {
-            arr[i] = 'a';
+            Arr[i] = Nil;
         }
     }
-    
+
     public static void Main(string[] args)
     {
         Init();
