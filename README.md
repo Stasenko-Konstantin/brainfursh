@@ -3,10 +3,7 @@
 very naive and inaccurate implementation just for fun and to shake my brain 
 
 ### run
-    dotnet run
+    sbt run
 
 ### eval file
-    dotnet run file.bf
-
-### helloworld 
-    +++++++.>++++.<++++..+++.>++++++++++++++++++.<.>>+++++++++++++++++.<<---.>>>+++.
+    sbt "run file.bf"

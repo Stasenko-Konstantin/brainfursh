@@ -1,3 +1,5 @@
 .idea
-brainsharp/bin
-brainsharp/obj
+.bsp
+target
+project
+out
