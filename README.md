@@ -1,9 +1,11 @@
-# brainsharp
+# braingock
 
-very naive and inaccurate implementation just for fun and to shake my brain 
+i dont know why i did that <br>
+thanks [Nim - How I Start](https://howistart.org/posts/nim/1/)
 
 ### run
-    sbt run
+    go run main.go
 
 ### eval file
-    sbt "run file.bf"
+    go run main.go examples/hello.bf
+    go run main.go examples/mandelbrot.bf
